@@ -22,8 +22,9 @@ pygame.display.set_caption("Calculator")
 clock = pygame.time.Clock()
 crashed = False
 op = [0]
-operands = ["+", "-", "x", "/"]
-result = ""
+operands = ["+", "-", "×", "÷"]
+result = "0"
+answer = 0
 print(op)
 
 
@@ -31,13 +32,17 @@ def get_opers(oper):
     return {
         "+": operator.add,
         "-": operator.sub,
-        "x": operator.mul,
-        "/": operator.truediv
+        "×": operator.mul,
+        "÷": operator.truediv
     }[oper]
 
 
 def cal(op1, oper, op2):
     return get_opers(oper)(int(op1), int(op2))
+
+
+# def onClick(mouseX, mouseY):
+    
 
 
 while not crashed:
@@ -50,9 +55,9 @@ while not crashed:
             if mods & pygame.KMOD_SHIFT:
                 if event.key == pygame.K_8:
                     if op[-1] in operands:
-                        op[-1] = "x"
+                        op[-1] = "×"
                     else:
-                        op.append("x")
+                        op.append("×")
                 elif event.key == pygame.K_EQUALS:
                     if op[-1] in operands:
                         op[-1] = "+"
@@ -113,22 +118,26 @@ while not crashed:
                     op.append("-")
             elif event.key == pygame.K_KP_MULTIPLY:
                 if op[-1] in operands:
-                    op[-1] = "x"
+                    op[-1] = "×"
                 else:
-                    op.append("x")
+                    op.append("×")
             elif event.key == pygame.K_SLASH or event.key == pygame.K_KP_DIVIDE:
                 if op[-1] in operands:
-                    op[-1] = "/"
+                    op[-1] = "÷"
                 else:
-                    op.append("/")
+                    op.append("÷")
             elif event.key == pygame.K_BACKSPACE:
+                answer = 0
                 op = op[:-1]
                 if len(op) == 0:
                     op = [0]
             elif event.key == pygame.K_ESCAPE:
                 op = [0]
-            elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
-                print(cal(*(result.split())))
+                answer = 0
+            elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER or event.key == pygame.K_EQUALS:
+                answer = cal(*(result.split()))
+                result += " = " + str(answer)
+                print(answer)
             # print(op)
             res = ""
             for i in op:
@@ -137,15 +146,17 @@ while not crashed:
                 else:
                     res += str(i)
             result = res
+            if answer != 0: result += " = " + str(answer)
             print(result)
 
     gameDP.fill((255, 255, 255))
-    buttons = ("C", "()", "%", "÷",
-               "7", "8", "9", "×",
-               "4", "5", "6", "-",
-               "1", "2", "3", "+",
-               "±", "0", ".", "=")
+    buttons = (("C", "( )", "%", "÷"),
+               ("7", "8", "9", "×"),
+               ("4", "5", "6", "-"),
+               ("1", "2", "3", "+"),
+               ("±", "0", ".", "="))
     mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
     col = 4
     row = 5
     input_field_height = 150
@@ -153,7 +164,8 @@ while not crashed:
     btn_width = (dp_width - gap * (col + 1)) / col
     btn_height = (dp_height - input_field_height - gap * (row + 1)) / row
     # button bg
-    pygame.draw.rect(gameDP, (0, 169, 224), (0, input_field_height - gap, dp_width, dp_height - input_field_height))
+    pygame.draw.rect(gameDP, (0, 169, 224), (0, input_field_height - 0.5, dp_width, dp_height - input_field_height + 1))
+    text = pygame.font.SysFont("Leelawadee UI", 30)
     for i in range(row):
         for j in range(col):
             xslice = gap + (btn_width + gap) * j
@@ -163,9 +175,23 @@ while not crashed:
             tbound = input_field_height + (btn_height + gap) * i + gap
             bbound = input_field_height + (btn_height + gap) * (i + 1)
             pygame.draw.rect(gameDP, (255, 255, 255), (xslice, input_field_height + yslice, btn_width, btn_height))
+            # text = pygame.font.SysFont("Leelawadee UI", 30, True)
+            textSurf = text.render(buttons[i][j], True, (0, 0, 0))
             if lbound < mouse[0] < rbound and tbound < mouse[1] < bbound:
                 # button hover color
                 pygame.draw.rect(gameDP, pygame.Color(0, 169, 224, 255), (xslice, input_field_height + yslice, btn_width, btn_height))
+                # change text color when user move cursor over the button
+                textSurf = text.render(buttons[i][j], True, (255, 255, 255))
+                # if 
+            textRect = textSurf.get_rect()
+            textRect.center = (xslice + (btn_width / 2), input_field_height + yslice + (btn_height / 2))
+            gameDP.blit(textSurf, textRect)
+    text = pygame.font.SysFont("Leelawadee UI", 40)
+    textSurf = text.render(result, True, (0, 0, 0))
+    textRect = textSurf.get_rect()
+    textRect.right = dp_width - 10
+    textRect.top = input_field_height / 2
+    gameDP.blit(textSurf, textRect)
 
     pygame.display.update()
     clock.tick(60)
