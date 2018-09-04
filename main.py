@@ -145,17 +145,27 @@ while not crashed:
                "4", "5", "6", "-",
                "1", "2", "3", "+",
                "±", "0", ".", "=")
-    gap = 0.5
-    btn_size = (dp_width - gap * 5) / 4
     mouse = pygame.mouse.get_pos()
-    for i in range(5 + 1):
-        for j in range(4 + 1):
-            lbound = (btn_size + gap) * j + gap
-            rbound = (btn_size + gap) * (j + 1) + gap
-            pygame.draw.rect(gameDP, navblue1, (gap, dp_height - (btn_size + gap) * (j + 1), btn_size, btn_size))
-            pygame.draw.rect(gameDP, navblue2, ((gap + btn_size) * 1 + gap, dp_height - (btn_size + gap) * (j + 1), btn_size, btn_size))
-            pygame.draw.rect(gameDP, navblue3, ((gap + btn_size) * 2 + gap, dp_height - (btn_size + gap) * (j + 1), btn_size, btn_size))
-            pygame.draw.rect(gameDP, navblue4, ((gap + btn_size) * 3 + gap, dp_height - (btn_size + gap) * (j + 1), btn_size, btn_size))
+    col = 4
+    row = 5
+    input_field_height = 150
+    gap = 0.5
+    btn_width = (dp_width - gap * (col + 1)) / col
+    btn_height = (dp_height - input_field_height - gap * (row + 1)) / row
+    # button bg
+    pygame.draw.rect(gameDP, (0, 169, 224), (0, input_field_height - gap, dp_width, dp_height - input_field_height))
+    for i in range(row):
+        for j in range(col):
+            xslice = gap + (btn_width + gap) * j
+            yslice = gap + (btn_height + gap) * i
+            lbound = gap + (btn_width + gap) * j
+            rbound = (btn_width + gap) * (j + 1)
+            tbound = input_field_height + (btn_height + gap) * i + gap
+            bbound = input_field_height + (btn_height + gap) * (i + 1)
+            pygame.draw.rect(gameDP, (255, 255, 255), (xslice, input_field_height + yslice, btn_width, btn_height))
+            if lbound < mouse[0] < rbound and tbound < mouse[1] < bbound:
+                # button hover color
+                pygame.draw.rect(gameDP, pygame.Color(0, 169, 224, 255), (xslice, input_field_height + yslice, btn_width, btn_height))
 
     pygame.display.update()
     clock.tick(60)
