@@ -1,3 +1,5 @@
+import pygame
+
 class Text:
 
     def __init__(self, surface, text, fontName="Leelawadee UI", fontSize=25, align="left", pos=(0, 0)):
