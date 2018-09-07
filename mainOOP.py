@@ -70,7 +70,7 @@ class Calculator:
                     rbound = (btn_width + gap) * (j + 1)
                     tbound = input_field_height + (btn_height + gap) * i + gap
                     bbound = input_field_height + (btn_height + gap) * (i + 1)
-                    btn = Button(self.surface, self.mouse, text=buttons[i][j], borderRadius=(100, 100, 100, 100))
+                    btn = Button(self.surface, self.mouse, text=buttons[i][j], borderRadius=(20, 20, 20, 20))
                     btn.setRect((xslice, input_field_height + yslice, btn_width, btn_height))
                     btn.draw()
             
