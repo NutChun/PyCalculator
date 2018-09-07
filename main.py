@@ -9,7 +9,7 @@ dp_height = 600
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (255, 0, 0)
-green = (0, 255, 255)
+green = (0, 255, 0)
 blue = (0, 0, 255)
 navblue1 = (101, 95, 255)
 navblue2 = (78, 115, 255)
@@ -19,7 +19,6 @@ navblue4 = (56, 205, 226)
 gameDP = pygame.display.set_mode((dp_width, dp_height))
 pygame.display.set_caption("Calculator")
 
-clock = pygame.time.Clock()
 crashed = False
 op = [0]
 operands = ["+", "-", "×", "÷"]
@@ -150,11 +149,11 @@ while not crashed:
             print(result)
 
     gameDP.fill((255, 255, 255))
-    buttons = (("C", "( )", "%", "÷"),
-               ("7", "8", "9", "×"),
-               ("4", "5", "6", "-"),
-               ("1", "2", "3", "+"),
-               ("±", "0", ".", "="))
+    buttons = (("C", "( )", "%", "del"),
+               ("7", "8", "9", "÷"),
+               ("4", "5", "6", "×"),
+               ("1", "2", "3", "-"),
+               (".", "0", "=", "+"))
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     col = 4
@@ -194,7 +193,6 @@ while not crashed:
     gameDP.blit(textSurf, textRect)
 
     pygame.display.update()
-    clock.tick(60)
 
 pygame.quit()
 quit()
