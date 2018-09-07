@@ -1,3 +1,5 @@
+import pygame
+
 class Button:
     
     def __init__(self, surf, mouse, text="button", color=(225, 225, 225), rect=(0, 0, 100, 50), width=0, borderRadius=0):
