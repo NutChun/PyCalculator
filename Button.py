@@ -1,10 +1,11 @@
 import pygame
 
-class Button:
+class Button():
     
-    def __init__(self, surf, mouse, text="button", color=(225, 225, 225), rect=(0, 0, 100, 50), width=0, borderRadius=0):
+    def __init__(self, surf, mouse, onclick, text="button", color=(225, 225, 225), rect=(0, 0, 100, 50), width=0, borderRadius=0):
         self.surf = surf
         self.mouse = mouse
+        self.onclick = onclick
         self.text = text
         self.color = color
         self.rect = rect
@@ -66,6 +67,8 @@ class Button:
                 pygame.draw.circle(self.surf, self.color, (rect[0] + r, rect[1] + rect[3] - r), r)
             else:
                 pygame.draw.rect(self.surf, self.color, self.rect, self.width)
+            if lbound < self.onclick[0] < rbound and tbound < self.onclick[1] < bbound:
+                print(self.text)
     
     # def onClick(self, ):
 
