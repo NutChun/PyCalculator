@@ -1,5 +1,5 @@
 import pygame
-from button import *
+from Button import *
 from Text import *
 
 class Calculator:
@@ -10,6 +10,7 @@ class Calculator:
         self.size = None, None
         self.running = True
         self.mouse = 0, 0
+        self.onclick = 0, 0
         self.bgcolor = (0, 0, 0)
     
     def setSize(self, width, height):
@@ -37,11 +38,17 @@ class Calculator:
         """Return current mouse position"""
         return self.mouse
 
+    def onClick(self):
+        return self.onclick
+
     def onExec(self):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.onclick = pygame.mouse.get_pos()
+
             
             # set background color for screen
             self.surface.fill(self.bgcolor)
@@ -72,10 +79,11 @@ class Calculator:
                     rbound = (btn_width + gap) * (j + 1)
                     tbound = input_field_height + (btn_height + gap) * i + gap
                     bbound = input_field_height + (btn_height + gap) * (i + 1)
-                    btn = Button(self.surface, self.mouse, text=buttons[i][j], borderRadius=20)
+                    btn = Button(self.surface, self.mouse, self.onclick, text=buttons[i][j], borderRadius=20)
                     btn.setRect((xslice, input_field_height + yslice, btn_width, btn_height))
                     btn.draw()
-            
+
+            self.onclick = 0, 0
             displayText = Text(self.surface, "0", pos=(self.size[0] - 20, input_field_height / 2), align="right", fontSize=40).draw()
 
             pygame.display.update()
