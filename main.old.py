@@ -21,10 +21,16 @@ pygame.display.set_caption("Calculator")
 
 crashed = False
 op = [0]
-operands = ["+", "-", "×", "÷"]
+operands = ["+", "-", "×", "÷", "^"]
 result = "0"
 answer = 0
 print(op)
+
+
+def int_float(n):
+    if "." in n:
+        return float(n)
+    return int(n)
 
 
 def get_opers(oper):
@@ -32,13 +38,41 @@ def get_opers(oper):
         "+": operator.add,
         "-": operator.sub,
         "×": operator.mul,
-        "÷": operator.truediv
+        "÷": operator.truediv,
+        "^": operator.pow
     }[oper]
 
 
 def cal(op1, oper, op2):
-    return get_opers(oper)(int(op1), int(op2))
+    return get_opers(oper)(int_float(op1), int_float(op2))
 
+
+def calculate(oper):
+    oper = oper.split()
+    order = ("^", "÷", "×", "-", "+")
+    n = 0
+    for i in order:
+        while n < len(oper):
+            if i == oper[n]:
+                num1 = oper[n - 1]
+                op = oper[n]
+                num2 = oper[n + 1]
+                result = cal(num1, op, num2)
+                if i == "^" and int_float(num1) < 0 and int_float(num2) % 2 == 0: result *= -1
+                oper[n + 1] = str(result)
+                oper.pop(n - 1)
+                oper.pop(n - 1)
+                n = 0
+            else:
+                n += 1
+        n = 0
+    return float(oper[0])
+
+
+def checkInt(num):
+    if num.is_integer():
+        return int(num)
+    return num
 
 # def onClick(mouseX, mouseY):
     
@@ -62,6 +96,11 @@ while not crashed:
                         op[-1] = "+"
                     else:
                         op.append("+")
+                elif event.key == pygame.K_6:
+                    if op[-1] in operands:
+                        op[-1] = "^"
+                    else:
+                        op.append("^")
             elif event.key == pygame.K_0 or event.key == pygame.K_KP0:
                 if len(op) == 1 and op[0] == 0:
                     op = []
@@ -134,8 +173,8 @@ while not crashed:
                 op = [0]
                 answer = 0
             elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER or event.key == pygame.K_EQUALS:
-                answer = cal(*(result.split()))
-                result += " = " + str(answer)
+                answer = calculate(result)
+                result += " = " + str(checkInt(answer))
                 print(answer)
             # print(op)
             res = ""
@@ -145,7 +184,7 @@ while not crashed:
                 else:
                     res += str(i)
             result = res
-            if answer != 0: result += " = " + str(answer)
+            if answer != 0: result += " = " + str(checkInt(answer))
             print(result)
 
     gameDP.fill((255, 255, 255))
