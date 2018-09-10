@@ -48,6 +48,12 @@ class Calculator:
                     self.running = False
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.onclick = pygame.mouse.get_pos()
+                elif event.type == pygame.KEYDOWN:
+                    mods = pygame.key.get_mods()
+                    if mods & pygame.KMOD_SHIFT:
+                        pass
+                elif event.type == pygame.K_0 or event.key == pygame.K_KP0:
+                    pass
 
             
             # set background color for screen
@@ -66,7 +72,7 @@ class Calculator:
             col = 4
             row = 5
             input_field_height = 300
-            gap = 0.5
+            gap = 5
             btn_width = (self.size[0] - gap * (col + 1)) / col
             btn_height = (self.size[1] - input_field_height - gap * (row + 1)) / row
 
@@ -79,7 +85,7 @@ class Calculator:
                     rbound = (btn_width + gap) * (j + 1)
                     tbound = input_field_height + (btn_height + gap) * i + gap
                     bbound = input_field_height + (btn_height + gap) * (i + 1)
-                    btn = Button(self.surface, self.mouse, self.onclick, text=buttons[i][j], borderRadius=20)
+                    btn = Button(self.surface, self.mouse, self.onclick, text=buttons[i][j], borderRadius=100)
                     btn.setRect((xslice, input_field_height + yslice, btn_width, btn_height))
                     btn.draw()
 
