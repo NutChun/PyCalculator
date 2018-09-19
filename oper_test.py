@@ -1,5 +1,5 @@
 import operator
-import pyperclip
+# import pyperclip
 
 def int_float(n):
     if "." in n:
@@ -45,6 +45,9 @@ def checkInt(num):
 
 while True:
     # usr_input = "1 ^ 1 + 6 + 6 * -2 - -6"
+    # seperate with space
+    # --- Support ---
+    # Addition, Subtract, Multiplication, Division, Exponent (^) and Parentheses
     usr_input = str(input(": "))
     oper = usr_input.split()
 
@@ -75,17 +78,18 @@ while True:
             negate = False
         pointer -= 1
     if len(oper) == 1:
+        # need not to searching for parentheses again
         # print(checkInt(float(oper[0])))
         if float(oper[0]).is_integer():
-            print("{:10d}|".format(checkInt(float(oper[0]))))
+            print(checkInt(float(oper[0])))
         else:
-            print("{:10f}|".format(checkInt(float(oper[0]))))
+            print(checkInt(float(oper[0])))
     else:
         # print(checkInt(float(search_cal(oper))))
         if float(search_cal(oper)).is_integer():
-            print("{:10d}|".format(checkInt(float(search_cal(oper)))))
+            print(checkInt(float(search_cal(oper))))
         else:
-            print("{:10f}|".format(checkInt(float(search_cal(oper)))))
+            print(checkInt(float(search_cal(oper))))
 
     # print(pyperclip.paste())
 # 46 + 5441540 - 4156 + 5437430
