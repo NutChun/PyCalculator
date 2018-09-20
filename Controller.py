@@ -435,8 +435,9 @@ class Controller:
                             self.equation.append("÷")
                             self.equation.append("100")
                     else:
-                        self.equation.append("÷")
-                        self.equation.append("100")
+                        if self.equation[-1] not in self.operators:
+                            self.equation.append("÷")
+                            self.equation.append("100")
 
         # format equation for display
         self.temp = ""
