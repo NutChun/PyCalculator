@@ -247,9 +247,14 @@ class Controller:
                 except IndexError:
                     self.equation = ["Invalid input"]
                     self.temp = "Invalid input"
+                    self.reset = True
                 except ZeroDivisionError:
                     self.equation = ["Error: Division by zero"]
                     self.temp = "Error: Division by zero"
+                    self.reset = True
+                except:
+                    self.equation = []
+                    self.temp = "0"
             
             # prevent user to insert input if its length more than 42 chars
             if self.inputLength < 42:
