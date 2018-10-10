@@ -62,6 +62,56 @@ class Calculator:
 
     def onClick(self):
         return self.onclickLeft
+    
+    def keyDownEvent(self, event):
+        mods = pygame.key.get_mods()
+        if mods & pygame.KMOD_SHIFT:
+            if event.key == pygame.K_8:
+                return "×"
+            elif event.key == pygame.K_EQUALS:
+                return "+"
+            elif event.key == pygame.K_6:
+                return "xʸ"
+            elif event.key == pygame.K_9:
+                return "("
+            elif event.key == pygame.K_0:
+                return ")"
+        elif event.key == pygame.K_0 or event.key == pygame.K_KP0:
+            return "0"
+        elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
+            return "1"
+        elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
+            return "2"
+        elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
+            return "3"
+        elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
+            return "4"
+        elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
+            return "5"
+        elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
+            return "6"
+        elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
+            return "7"
+        elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
+            return "8"
+        elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
+            return "9"
+        elif event.key == pygame.K_PERIOD or event.key == pygame.K_KP_PERIOD:
+            return "."
+        elif event.key == pygame.K_KP_PLUS:
+            return "+"
+        elif event.key == pygame.K_MINUS or event.key == pygame.K_KP_MINUS:
+            return "-"
+        elif event.key == pygame.K_KP_MULTIPLY:
+            return "×"
+        elif event.key == pygame.K_SLASH or event.key == pygame.K_KP_DIVIDE:
+            return "÷"
+        elif event.key == pygame.K_BACKSPACE:
+            return "del"
+        elif event.key == pygame.K_ESCAPE:
+            return "C"
+        elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER or event.key == pygame.K_EQUALS:
+            return "="
 
     def onExec(self):
         while self.running:
@@ -80,54 +130,8 @@ class Calculator:
 
                 # keydown event
                 if event.type == pygame.KEYDOWN:
-                    mods = pygame.key.get_mods()
-                    if mods & pygame.KMOD_SHIFT:
-                        if event.key == pygame.K_8:
-                            self.ctrl.addInput("×")
-                        elif event.key == pygame.K_EQUALS:
-                            self.ctrl.addInput("+")
-                        elif event.key == pygame.K_6:
-                            self.ctrl.addInput("xʸ")
-                        elif event.key == pygame.K_9:
-                            self.ctrl.addInput("(")
-                        elif event.key == pygame.K_0:
-                            self.ctrl.addInput(")")
-                    elif event.key == pygame.K_0 or event.key == pygame.K_KP0:
-                        self.ctrl.addInput("0")
-                    elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-                        self.ctrl.addInput("1")
-                    elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-                        self.ctrl.addInput("2")
-                    elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-                        self.ctrl.addInput("3")
-                    elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-                        self.ctrl.addInput("4")
-                    elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-                        self.ctrl.addInput("5")
-                    elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-                        self.ctrl.addInput("6")
-                    elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-                        self.ctrl.addInput("7")
-                    elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-                        self.ctrl.addInput("8")
-                    elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-                        self.ctrl.addInput("9")
-                    elif event.key == pygame.K_PERIOD or event.key == pygame.K_KP_PERIOD:
-                        self.ctrl.addInput(".")
-                    elif event.key == pygame.K_KP_PLUS:
-                        self.ctrl.addInput("+")
-                    elif event.key == pygame.K_MINUS or event.key == pygame.K_KP_MINUS:
-                        self.ctrl.addInput("-")
-                    elif event.key == pygame.K_KP_MULTIPLY:
-                        self.ctrl.addInput("×")
-                    elif event.key == pygame.K_SLASH or event.key == pygame.K_KP_DIVIDE:
-                        self.ctrl.addInput("÷")
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.ctrl.addInput("del")
-                    elif event.key == pygame.K_ESCAPE:
-                        self.ctrl.addInput("C")
-                    elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER or event.key == pygame.K_EQUALS:
-                        self.ctrl.addInput("=")
+                    key = self.keyDownEvent(event)
+                    self.ctrl.addInput(key)
                     # self.temp = " ".join(self.ctrl.onHandle())
                     self.temp = self.ctrl.onHandle()
 
