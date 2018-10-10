@@ -6,6 +6,9 @@
 # You can visit my repository at
 # https://github.com/nutchun/PyCalculator
 # 
+# Sound effects by https://picturetosound.com
+# Youtube: https://www.youtube.com/c/picturetosound
+# 
 # This project is a part of Software Development Practice 1 course
 #
 # Developed by Nuttakan Chuntra
@@ -18,6 +21,7 @@ import pygame
 from Button import *
 from Text import *
 from Controller import *
+
 
 class Calculator:
 
@@ -144,10 +148,10 @@ class Calculator:
 
             # set text for buttons
             buttons = [["C",  "+/-", "%", "÷", "×"],
-                       ["(",  "7",   "8", "9", "-"],
-                       [")",  "4",   "5", "6", "+"],
-                       ["xʸ", "1",   "2", "3", "="],
-                       ["√x", "0",   "0", ".", "="]]
+                       ["(",   "7",  "8", "9", "-"],
+                       [")",   "4",  "5", "6", "+"],
+                       ["xʸ",  "1",  "2", "3", "="],
+                       ["√x",  "0",  "0", ".", "="]]
 
             # determine the property of the buttons
             col = len(buttons[0])
@@ -198,8 +202,12 @@ class Calculator:
 
                     if b == "=":
                         btn.setBGColor((51, 235, 145))
+                        btn.setSound("sound/buttonclick_big.mp3")
                     elif i == 0 or j == col - 1 or j == 0:
                         btn.setBGColor((74, 81, 99))
+                        btn.setSound("sound/buttonclick_big.mp3")
+                    else:
+                        btn.setSound("sound/buttonclick_small.mp3")
 
                     # if b == "C" and self.temp == "0":
                     #     buttons[i][j] = "AC"
