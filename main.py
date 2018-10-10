@@ -139,15 +139,15 @@ class Calculator:
             self.mousePos()
 
             # set text for buttons
-            buttons = [["C", "+/-", "%", "÷", "×"],
-                       ["(", "7", "8", "9", "-"],
-                       [")", "4", "5", "6", "+"],
-                       ["xʸ", "1", "2", "3", "="],
-                       ["√x", "0", "0", ".", "="]]
+            buttons = [["C",  "+/-", "%", "÷", "×"],
+                       ["(",  "7",   "8", "9", "-"],
+                       [")",  "4",   "5", "6", "+"],
+                       ["xʸ", "1",   "2", "3", "="],
+                       ["√x", "0",   "0", ".", "="]]
 
             # determine the property of the buttons
-            col = 5
-            row = 5
+            col = len(buttons[0])
+            row = len(buttons)
             result_field_height = 140
             input_field_height = 40
             display_field_height = result_field_height + input_field_height
@@ -160,58 +160,58 @@ class Calculator:
             
             # draw the buttons and send value to controller
             i = 0
-            drawVert = True
             while i < row:
                 j = 0
                 while j < col:
-                    xstep = gap + (btn_width + gap) * j
-                    ystep = gap + (btn_height + gap) * i
-                    # lbound = gap + (btn_width + gap) * j
-                    # rbound = (btn_width + gap) * (j + 1)
-                    # tbound = display_field_height + (btn_height + gap) * i + gap
-                    # bbound = display_field_height + (btn_height + gap) * (i + 1)
-                    btn = RoundButton(self.surface, self.mouse, self.onclickLeft, self.onreleaseLeft, self.onkeydown, borderRadius=10)
-                    if buttons[i][j] == "0":
-                        new_btn_width = btn_width * 2 + gap
-                        btn.setText(buttons[i][j])
-                        btn.setRect((xstep, display_field_height + ystep, new_btn_width, btn_height))
-                        j += 1
-                    elif buttons[i][j] == "=":
-                        if drawVert:
-                            new_btn_height = btn_height * 2 + gap
-                            btn.setText(buttons[i][j])
-                            btn.setRect((xstep, display_field_height + ystep, btn_width, new_btn_height))
-                            btn.setBGColor((51, 235, 145))
-                            btn.draw()
-                            if btn.onClick():
-                                self.text = buttons[i][j]
-                                self.ctrl.addInput(buttons[i][j])
-                                # self.temp = " ".join(self.ctrl.onHandle())
-                                self.temp = self.ctrl.onHandle()
-                            drawVert = False
+                    
+                    b = buttons[i][j]
+
+                    if i > 0 and buttons[i - 1][j] == b:
                         j += 1
                         continue
-                    else:
-                        if buttons[i][j] == "C" and self.temp == "0":
-                            buttons[i][j] = "AC"
-                        elif buttons[i][j] == "AC" and len(self.temp) > 0:
-                            buttons[i][j] = "C"
-                        btn.setText(buttons[i][j])
-                        btn.setRect((xstep, display_field_height + ystep, btn_width, btn_height))
-                    if i == 0 or j == col - 1 or j == 0:
-                        btn.setBGColor((74, 81, 99))
                     
+                    xstep = gap + (btn_width + gap) * j
+                    ystep = gap + (btn_height + gap) * i
+                    rowspan = 1
+                    colspan = 1
+
+                    for csp in range(j + 1, col):
+                        if buttons[i][csp] != b:
+                            break
+                        colspan += 1
+                    
+                    for rsp in range(i + 1, row):
+                        if buttons[rsp][j] != b:
+                            break
+                        rowspan += 1
+                    
+                    new_btn_width = btn_width * colspan + gap * (colspan - 1)
+                    new_btn_height = btn_height * rowspan + gap * (rowspan - 1)
+
+                    btn = RoundButton(self.surface, self.mouse, self.onclickLeft, self.onreleaseLeft, self.onkeydown, borderRadius=10)
+                    btn.setText(b)
+                    btn.setRect((xstep, display_field_height + ystep, new_btn_width, new_btn_height))
+
+                    if b == "=":
+                        btn.setBGColor((51, 235, 145))
+                    elif i == 0 or j == col - 1 or j == 0:
+                        btn.setBGColor((74, 81, 99))
+
+                    # if b == "C" and self.temp == "0":
+                    #     buttons[i][j] = "AC"
+                    # elif b == "AC" and len(self.temp) > 0:
+                    #     buttons[i][j] = "C"
+
                     btn.draw()
                     
                     if btn.onClick():
-                        self.text = buttons[i][j]
-                        self.ctrl.addInput(buttons[i][j])
-                        # self.temp = " ".join(self.ctrl.onHandle())
+                        self.text = b
+                        self.ctrl.addInput(b)
                         self.temp = self.ctrl.onHandle()
 
-                    j += 1
+                    j += colspan
                 i += 1
-            
+                    
             # set and draw backspace button
             backspaceButton = ImageButton(self.surface, self.mouse, self.onclickLeft, self.onreleaseLeft, self.onkeydown, "icon/outline_backspace_white_18dp.png", "icon/baseline_backspace_white_18dp.png", (40, 44, 55),(self.size[0] - 50, result_field_height + input_field_height / 2 - 15, 36, 36))
             backspaceButton.draw()
