@@ -14,16 +14,19 @@
 
 import pygame
 from Text import *
-from main import *
 
 class Button:
 
-    def __init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100)):
+    def __init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100), sound=None):
         self.surface = surface
         self.mouse = mouse
         self.onclick = onclick
         self.onrelease = onrelease
         self.onKeyDown = onKeyDown
+        self.sound = sound
+    
+    def setSound(self, filename):
+        self.sound = filename
 
     def onClick(self):
         lbound = self.rect[0]
@@ -35,6 +38,11 @@ class Button:
             s = pygame.Surface((self.rect[2], self.rect[3]), pygame.SRCALPHA)
             s.fill((0, 0, 0, 64))
             self.surface.blit(s, (lbound,tbound))
+
+            if self.sound is not None:
+                pygame.mixer.music.load(self.sound)
+                pygame.mixer.music.play()
+
             return True
         return False
     
@@ -43,7 +51,7 @@ class RectButton(Button):
     """Normal rectangular button"""
     
     def __init__(self, surface, mouse, onclick, onrelease, onKeyDown, text="button", bgColor=(51, 57, 73), rect=(0, 0, 50, 100), width=0):
-        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100))
+        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100), sound=None)
         self.text = text
         self.bgColor = bgColor
         self.width = width
@@ -97,7 +105,7 @@ class RoundButton(Button):
     """Rectangular button with rounded corner"""
 
     def __init__(self, surface, mouse, onclick, onrelease, onKeyDown, text="button", bgColor=(51, 57, 73), rect=(0, 0, 50, 100), borderRadius=10):
-        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100))
+        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100), sound=None)
         self.borderRadius = borderRadius
         self.text = text
         self.bgColor = bgColor
@@ -155,7 +163,7 @@ class ImageButton(Button):
     """Rectangular button with image icon"""
 
     def __init__(self, surface, mouse, onclick, onrelease, onKeyDown, image, imageh, bgColor, rect=(0, 0, 50, 100)):
-        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100))
+        Button.__init__(self, surface, mouse, onclick, onrelease, onKeyDown, rect=(0, 0, 50, 100), sound=None)
         self.image = image
         self.imageh = imageh
         self.bgColor = bgColor
