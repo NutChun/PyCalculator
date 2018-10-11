@@ -29,6 +29,7 @@ class Controller:
         self.reset = False
         self.keydown = False
         self.inputLength = 0
+        self.maxchar = 1
     
     @property
     def temps(self):
@@ -44,6 +45,9 @@ class Controller:
     def setInputLength(self, length):
         self.inputLength = length
     
+    def setMaxChar(self, maxchar):
+        self.maxchar = maxchar
+
     def addInput(self, input):
         self.currentInput = input
     
@@ -430,7 +434,7 @@ class Controller:
                 self.getResult()
             
             # prevent user to insert input if its length more than 42 chars
-            if self.inputLength < 42:
+            if self.inputLength < self.maxchar:
 
                 ##################################################
                 # when insert numbers
