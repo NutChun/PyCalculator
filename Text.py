@@ -27,6 +27,8 @@ class Text:
         self.textArea = textArea
         self.bold = 0
         self.italic = 0
+        self.labelSurf = None
+        self.labelRect = None
 
     def __len__(self):
         """Return the length of text"""
@@ -34,6 +36,9 @@ class Text:
     
     def setFontSize(self, size):
         self.fontSize = size
+
+    def getRect(self):
+        return self.labelRect
     
     def textDecor(self, bold=0, italic=0):
         self.bold = bold
