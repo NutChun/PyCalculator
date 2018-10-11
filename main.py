@@ -21,6 +21,7 @@ import pygame
 from Button import *
 from Text import *
 from Controller import *
+from GridLayout import *
 
 
 class Calculator:
@@ -117,12 +118,14 @@ class Calculator:
 
         onreleaseLeft = 0, 0
         firstPressed = False
-        onkeydown = False
-        temp = "0"
+        temp = ["0", "", False]
         ctrl = Controller()
         textWidth = 1
 
         while self.running:
+            onkeydown = False
+            key = None
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -143,10 +146,6 @@ class Calculator:
                 # keydown event
                 if event.type == pygame.KEYDOWN:
                     key = self.keyDownEvent(event)
-                    ctrl.addInput(key)
-                    # temp = " ".join(ctrl.onHandle())
-                    temp = ctrl.onHandle()
-
             
             # set background color for the screen
             self.surface.fill(self.bgcolor)
@@ -162,79 +161,48 @@ class Calculator:
                        ["√x",  "0",  "0", ".", "="]]
 
             # determine the property of the buttons
-            col = len(buttons[0])
-            row = len(buttons)
             result_field_height = 100
             input_field_height = 40
             display_field_height = result_field_height + input_field_height
-            gap = 5
-            btn_width = (self.surface.get_width() - gap * (col + 1)) / col
-            btn_height = (self.surface.get_height() - display_field_height - gap * (row + 1)) / row
 
             # set bg for button group panel
             pygame.draw.rect(self.surface, (40, 44, 55), (0, result_field_height, self.surface.get_width(), self.surface.get_height() - result_field_height))
             
-            # draw the buttons and send value to controller
-            i = 0
-            while i < row:
-                j = 0
-                while j < col:
-                    
-                    b = buttons[i][j]
+            grid = GridLayout(buttons, (0, display_field_height, self.surface.get_width(), self.surface.get_height()), 20)
 
-                    if i > 0 and buttons[i - 1][j] == b:
-                        j += 1
-                        continue
-                    
-                    xstep = gap + (btn_width + gap) * j
-                    ystep = gap + (btn_height + gap) * i
-                    rowspan = 1
-                    colspan = 1
-
-                    for csp in range(j + 1, col):
-                        if buttons[i][csp] != b:
-                            break
-                        colspan += 1
-                    
-                    for rsp in range(i + 1, row):
-                        if buttons[rsp][j] != b:
-                            break
-                        rowspan += 1
-                    
-                    new_btn_width = btn_width * colspan + gap * (colspan - 1)
-                    new_btn_height = btn_height * rowspan + gap * (rowspan - 1)
-
+            for rect in grid.generate():
+                if rect is not None:
                     btn = RoundButton(self.surface, self.mouse, self.onclickLeft, onreleaseLeft, onkeydown, borderRadius=10)
+                    i, j = grid.getIndex()
+                    b = buttons[i][j]
                     btn.setText(b)
-                    btn.setRect((xstep, display_field_height + ystep, new_btn_width, new_btn_height))
+                    btn.setRect((rect[0], rect[1], rect[2], rect[3]))
 
                     if b == "=":
                         btn.setBGColor((51, 235, 145))
                         btn.setSound("sound/buttonclick_big.mp3")
-                    elif i == 0 or j == col - 1 or j == 0:
+                    elif i == 0 or j == len(buttons[0]) - 1 or j == 0:
                         btn.setBGColor((74, 81, 99))
                         btn.setSound("sound/buttonclick_big.mp3")
                     else:
                         btn.setSound("sound/buttonclick_small.mp3")
 
-                    # if b == "C" and temp == "0":
-                    #     buttons[i][j] = "AC"
-                    # elif b == "AC" and len(temp) > 0:
-                    #     buttons[i][j] = "C"
-
                     btn.draw()
                     
+                    if b == key:
+                        btn.keydown()
+                        
                     if btn.onClick():
-                        self.text = b
                         ctrl.addInput(b)
                         temp = ctrl.onHandle()
-
-                    j += colspan
-                i += 1
                     
             # set and draw backspace button
             backspaceButton = ImageButton(self.surface, self.mouse, self.onclickLeft, onreleaseLeft, onkeydown, "icon/outline_backspace_white_18dp.png", "icon/baseline_backspace_white_18dp.png", (40, 44, 55),(self.surface.get_width() - 50, result_field_height + input_field_height / 2 - 15, 36, 36))
+            backspaceButton.setSound("sound/buttonclick_big.mp3")
             backspaceButton.draw()
+
+            if key == "del":
+                backspaceButton.keydown()
 
             # when click backspace button, send value to controller
             if backspaceButton.onClick():
@@ -256,10 +224,7 @@ class Calculator:
             #     displayInput.setFontSize(20)
             # displayInput.draw()
 
-            if temp == "":
-                temp = "0"
-
-            displayResult = Text(self.surface, temp, "Consolas", pos=(self.surface.get_width() - 20, result_field_height / 2), align="right", fontColor=(255, 255, 255))
+            displayResult = Text(self.surface, temp[0], "Consolas", pos=(self.surface.get_width() - 20, result_field_height / 2), align="right", fontColor=(255, 255, 255))
             resultLength = len(displayResult)
             ctrl.setInputLength(resultLength)
             w = self.surface.get_width() - 40
@@ -273,7 +238,7 @@ class Calculator:
                 displayResult.setFontSize(20)
             else: # max 42 chars
                 displayResult.setFontSize(20)
-                temp = temp[:w // 11]
+                temp[0] = temp[0][:w // 11]
             ctrl.setMaxChar(w // 11)
 
 
@@ -281,10 +246,8 @@ class Calculator:
             
             displayResult.draw()
             textWidth = displayResult.getRect()[2]
-            print(textWidth // resultLength)
             # print(1//2)
 
-            onkeydown = False
             pygame.display.update()
         
         pygame.quit()
