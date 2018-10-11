@@ -32,17 +32,12 @@ class Calculator:
         self.running = True
         self.mouse = 0, 0
         self.onclickLeft = 0, 0
-        self.onreleaseLeft = 0, 0
-        self.firstPressed = False
-        self.onkeydown = False
         self.bgcolor = 0, 0, 0
-        self.temp = "0"
-        self.ctrl = Controller()
     
     def setSize(self, width, height):
         """Set window or screen size"""
         self.size = width, height
-        self.surface = pygame.display.set_mode(self.size)
+        self.surface = pygame.display.set_mode(self.size, pygame.VIDEORESIZE)
     
     def setBG(self, color):
         """Set screen background color"""
@@ -118,26 +113,39 @@ class Calculator:
             return "="
 
     def onExec(self):
+        """On app running"""
+
+        onreleaseLeft = 0, 0
+        firstPressed = False
+        onkeydown = False
+        temp = "0"
+        ctrl = Controller()
+        textWidth = 1
+
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
 
+                # make window resizable
+                if event.type == pygame.VIDEORESIZE:
+                    self.surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+
                 # set the mouse position at first click
-                if not self.firstPressed and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if not firstPressed and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.onclickLeft = pygame.mouse.get_pos()
-                    self.firstPressed = True
+                    firstPressed = True
                 #  set the position at mouse release
-                if self.firstPressed and event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                    self.onreleaseLeft = pygame.mouse.get_pos()
-                    self.firstPressed = False
+                if firstPressed and event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    onreleaseLeft = pygame.mouse.get_pos()
+                    firstPressed = False
 
                 # keydown event
                 if event.type == pygame.KEYDOWN:
                     key = self.keyDownEvent(event)
-                    self.ctrl.addInput(key)
-                    # self.temp = " ".join(self.ctrl.onHandle())
-                    self.temp = self.ctrl.onHandle()
+                    ctrl.addInput(key)
+                    # temp = " ".join(ctrl.onHandle())
+                    temp = ctrl.onHandle()
 
             
             # set background color for the screen
@@ -156,15 +164,15 @@ class Calculator:
             # determine the property of the buttons
             col = len(buttons[0])
             row = len(buttons)
-            result_field_height = 140
+            result_field_height = 100
             input_field_height = 40
             display_field_height = result_field_height + input_field_height
             gap = 5
-            btn_width = (self.size[0] - gap * (col + 1)) / col
-            btn_height = (self.size[1] - display_field_height - gap * (row + 1)) / row
+            btn_width = (self.surface.get_width() - gap * (col + 1)) / col
+            btn_height = (self.surface.get_height() - display_field_height - gap * (row + 1)) / row
 
             # set bg for button group panel
-            pygame.draw.rect(self.surface, (40, 44, 55), (0, result_field_height, self.size[0], self.size[1] - result_field_height))
+            pygame.draw.rect(self.surface, (40, 44, 55), (0, result_field_height, self.surface.get_width(), self.surface.get_height() - result_field_height))
             
             # draw the buttons and send value to controller
             i = 0
@@ -196,7 +204,7 @@ class Calculator:
                     new_btn_width = btn_width * colspan + gap * (colspan - 1)
                     new_btn_height = btn_height * rowspan + gap * (rowspan - 1)
 
-                    btn = RoundButton(self.surface, self.mouse, self.onclickLeft, self.onreleaseLeft, self.onkeydown, borderRadius=10)
+                    btn = RoundButton(self.surface, self.mouse, self.onclickLeft, onreleaseLeft, onkeydown, borderRadius=10)
                     btn.setText(b)
                     btn.setRect((xstep, display_field_height + ystep, new_btn_width, new_btn_height))
 
@@ -209,38 +217,38 @@ class Calculator:
                     else:
                         btn.setSound("sound/buttonclick_small.mp3")
 
-                    # if b == "C" and self.temp == "0":
+                    # if b == "C" and temp == "0":
                     #     buttons[i][j] = "AC"
-                    # elif b == "AC" and len(self.temp) > 0:
+                    # elif b == "AC" and len(temp) > 0:
                     #     buttons[i][j] = "C"
 
                     btn.draw()
                     
                     if btn.onClick():
                         self.text = b
-                        self.ctrl.addInput(b)
-                        self.temp = self.ctrl.onHandle()
+                        ctrl.addInput(b)
+                        temp = ctrl.onHandle()
 
                     j += colspan
                 i += 1
                     
             # set and draw backspace button
-            backspaceButton = ImageButton(self.surface, self.mouse, self.onclickLeft, self.onreleaseLeft, self.onkeydown, "icon/outline_backspace_white_18dp.png", "icon/baseline_backspace_white_18dp.png", (40, 44, 55),(self.size[0] - 50, result_field_height + input_field_height / 2 - 15, 36, 36))
+            backspaceButton = ImageButton(self.surface, self.mouse, self.onclickLeft, onreleaseLeft, onkeydown, "icon/outline_backspace_white_18dp.png", "icon/baseline_backspace_white_18dp.png", (40, 44, 55),(self.surface.get_width() - 50, result_field_height + input_field_height / 2 - 15, 36, 36))
             backspaceButton.draw()
 
             # when click backspace button, send value to controller
             if backspaceButton.onClick():
                 self.text = "del"
-                self.ctrl.addInput("del")
-                # self.temp = " ".join(self.ctrl.onHandle())
-                self.temp = self.ctrl.onHandle()
-            if self.onreleaseLeft != (0, 0):
+                ctrl.addInput("del")
+                # temp = " ".join(ctrl.onHandle())
+                temp = ctrl.onHandle()
+            if onreleaseLeft != (0, 0):
                 self.onclickLeft = 0, 0
-                self.onreleaseLeft = 0, 0
+                onreleaseLeft = 0, 0
 
             # self.onclickLeft = 0, 0
             # ctrl = Controller()
-            # displayInput = Text(self.surface, self.temp, "Consolas", fontColor=(255, 255, 255), align="right", pos=(self.size[0] - 60, result_field_height + input_field_height / 2 + 4))
+            # displayInput = Text(self.surface, temp, "Consolas", fontColor=(255, 255, 255), align="right", pos=(self.surface.get_width() - 60, result_field_height + input_field_height / 2 + 4))
             # inputLength = len(displayInput)
             # if inputLength < 22:
             #     displayInput.setFontSize(25)
@@ -248,27 +256,35 @@ class Calculator:
             #     displayInput.setFontSize(20)
             # displayInput.draw()
 
-            if self.temp == "":
-                self.temp = "0"
+            if temp == "":
+                temp = "0"
 
-            displayResult = Text(self.surface, self.temp, "Consolas", pos=(self.size[0] - 20, result_field_height / 2), align="right", fontColor=(255, 255, 255))
+            displayResult = Text(self.surface, temp, "Consolas", pos=(self.surface.get_width() - 20, result_field_height / 2), align="right", fontColor=(255, 255, 255))
             resultLength = len(displayResult)
-            self.ctrl.setInputLength(resultLength)
+            ctrl.setInputLength(resultLength)
+            w = self.surface.get_width() - 40
 
             # change font size for displayResult if it reach the limit
-            if resultLength < 22:
+            if resultLength <= w // 22:
                 displayResult.setFontSize(40)
-            elif resultLength < 28:
+            elif resultLength <= w // 17:
                 displayResult.setFontSize(30)
-            elif resultLength < 43:
+            elif resultLength <= w // 11:
                 displayResult.setFontSize(20)
             else: # max 42 chars
                 displayResult.setFontSize(20)
-                self.temp = self.temp[:42]
+                temp = temp[:w // 11]
+            ctrl.setMaxChar(w // 11)
+
+
+            # if re < textWidth // resultLength
             
             displayResult.draw()
+            textWidth = displayResult.getRect()[2]
+            print(textWidth // resultLength)
+            # print(1//2)
 
-            self.onkeydown = False
+            onkeydown = False
             pygame.display.update()
         
         pygame.quit()
@@ -278,6 +294,7 @@ class Calculator:
 if __name__ == "__main__":
     # create Calculator object
     app = Calculator()
+    # initial size
     app.setSize(500, 600)
     app.setBG((34, 38, 49))
     app.setCaption("PyCalculator")
