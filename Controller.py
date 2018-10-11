@@ -369,6 +369,8 @@ class Controller:
                     temp += " " + i + " "
                 else:
                     temp += i
+        else:
+            return "0"
         return temp
 
     def popEquation(self):
