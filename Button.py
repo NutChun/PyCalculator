@@ -23,10 +23,14 @@ class Button:
         self.onclick = onclick
         self.onrelease = onrelease
         self.onKeyDown = onKeyDown
+        self.rect = rect
         self.sound = sound
     
     def setSound(self, filename):
         self.sound = filename
+    
+    def keydown(self):
+        self.onKeyDown = True
 
     def onClick(self):
         lbound = self.rect[0]
@@ -42,6 +46,8 @@ class Button:
             if self.sound is not None:
                 pygame.mixer.music.load(self.sound)
                 pygame.mixer.music.play()
+            
+            self.onKeyDown = False
 
             return True
         return False
