@@ -43,7 +43,7 @@ class Controller:
 
     def setInputLength(self, length):
         self.inputLength = length
-
+    
     def addInput(self, input):
         self.currentInput = input
     
@@ -174,8 +174,7 @@ class Controller:
                 for i in range(self.parentheses):
                     self.equation.append(")")
                     self.parentheses -= 1
-            t = self.equation
-            result = self.onCalculate(t)
+            result = self.onCalculate(self.equation)
             # if isinstance(result, complex):
             #     result = complex()
             self.equation = [str(result)]
@@ -354,13 +353,13 @@ class Controller:
                 self.equation.append("÷")
                 self.equation.append("100")
         else:
-            if self.equation[-1] not in self.operators:
+            if self.equation[-1] not in self.operators and self.equation[-1] != "(" and self.equation[-1] != "-(" and self.equation[-1] != "√(":
                 self.equation.append("÷")
                 self.equation.append("100")
     
     def formatEquation(self, equation):
         temp = ""
-        if equation != 0:
+        if equation:
             for i in equation:
                 if i in self.operators:
                     temp += " " + i + " "
@@ -476,4 +475,4 @@ class Controller:
         # always reset input to None
         self.resetInput()
         
-        return self.formatEquation(self.equation)
+        return self.formatEquation(self.equation), self.reset
